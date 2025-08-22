@@ -1,0 +1,189 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red46\green174\blue187;\red0\green0\blue0;\red47\green180\blue29;
+\red200\green20\blue201;\red64\green11\blue217;\red159\green160\blue28;\red180\green36\blue25;}
+{\*\expandedcolortbl;;\cssrgb\c20196\c73240\c78250;\csgray\c0;\cssrgb\c20238\c73898\c14947;
+\cssrgb\c83396\c23075\c82664;\cssrgb\c32308\c18668\c88227;\cssrgb\c68468\c68012\c14208;\cssrgb\c76409\c21698\c12524;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww18580\viewh14440\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs22 \cf2 \CocoaLigature0 # Architecture\cf3 \
+arc\cf4 =$(\cf3 uname
+\f1\b \cf5  -a
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # Pysical && Virtual Cores\cf3 \
+phy_proc\cf4 =$(
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "physical id"
+\f0\b0 \cf3  /proc/cpuinfo \cf4 |\cf3  wc
+\f1\b \cf5  -l
+\f0\b0 \cf4 )\cf3 \
+vir_proc\cf4 =$(
+\f1\b \cf6 grep
+\f0\b0 \cf3  processor /proc/cpuinfo \cf4 |\cf3  wc
+\f1\b \cf5  -l
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # RAM && Storage && utilization\cf3 \
+aRAM\cf4 =$(\cf3 free
+\f1\b \cf5  -m
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '$1 == "Mem:" \{print $3\}'
+\f0\b0 \cf4 )\cf3 \
+aStorage\cf4 =$(\cf3 free
+\f1\b \cf5  -m
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '$1 == "Mem:" \{print $2\}'
+\f0\b0 \cf4 )\cf3 \
+utiproc\cf4 =$(\cf3 free
+\f1\b \cf5  -m
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '$1 == "Mem:" \{printf("(%.2f%%)\\n", $3/$2*100)\}'
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # Disk Memory\cf3 \
+diskuse\cf4 =$(\cf3 df
+\f1\b \cf5  -m
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "/dev/"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 grep\cf5  -v
+\f0\b0 \cf3  
+\f1\b \cf7 "/boot"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '\{memory_use += $3\} END \{print memory_use\}'
+\f0\b0 \cf4 )\cf3 \
+disktotal\cf4 =$(\cf3 df
+\f1\b \cf5  -m
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "/dev/"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 grep\cf5  -v
+\f0\b0 \cf3  
+\f1\b \cf7 "/boot"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '\{memory_total += $2\} END \{printf \'93%.0f\'94, memory_total/1024\}'
+\f0\b0 \cf4 )\cf3 \
+utidisk\cf4 =$(\cf3 df
+\f1\b \cf5  -m
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "/dev/"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 grep\cf5  -v
+\f0\b0 \cf3  
+\f1\b \cf7 "/boot"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '\{use += $3\} \{total += $2\} END \{printf("(%d%%)\\n"), use/total*100\}'
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # CPU Usage\cf3 \
+cpuid\cf4 =$(\cf3 top -bn1 \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "Cpu(s)"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '\{print $8\}'
+\f0\b0 \cf4 )\cf3 \
+cpu_op\cf4 =$(\cf3 expr 100 - 
+\f1\b \cf8 $cpuid
+\f0\b0 \cf4 )\cf3 \
+uticpu\cf4 =$(
+\f1\b \cf6 printf
+\f0\b0 \cf3  
+\f1\b \cf7 "%.1f"
+\f0\b0 \cf3  
+\f1\b \cf8 $cpu_op
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # Last Reboot\cf3 \
+lreboot\cf4 =$(\cf3 uptime
+\f1\b \cf5  -s
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 cut\cf5  -c
+\f0\b0 \cf3  1-16\cf4 )\cf3 \
+\
+\cf2 # LVM Status\cf3 \
+lvmstat\cf4 =$(if\cf3  \cf4 [\cf3  \cf4 $(\cf3 lsblk \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "lvm"
+\f0\b0 \cf3  \cf4 |\cf3  wc
+\f1\b \cf5  -l
+\f0\b0 \cf4 )\cf3  \cf4 -gt\cf3  0 \cf4 ];\cf3  \cf4 then\cf3  
+\f1\b \cf6 echo
+\f0\b0 \cf3  yes\cf4 ;\cf3  \cf4 else\cf3  
+\f1\b \cf6 echo
+\f0\b0 \cf3  no\cf4 ;\cf3  \cf4 fi)\cf3 \
+\
+\cf2 # Num of TCP connections\cf3 \
+nbr_tcp\cf4 =$(\cf3 ss
+\f1\b \cf5  -t
+\f0\b0 \cf3  state established \cf4 |\cf3  wc
+\f1\b \cf5  -l
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # Num of existing users\cf3 \
+nbr_usr\cf4 =$(\cf3 users \cf4 |\cf3  wc
+\f1\b \cf5  -w
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # IPv4 && MAC\cf3 \
+addr_ip\cf4 =$(\cf3 hostname
+\f1\b \cf5  -I
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '\{print $1\}'
+\f0\b0 \cf4 )\cf3 \
+addr_mac\cf4 =$(\cf3 ip link \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  
+\f1\b \cf7 "link/ether"
+\f0\b0 \cf3  \cf4 |\cf3  
+\f1\b \cf6 awk
+\f0\b0 \cf3  
+\f1\b \cf7 '\{print $2\}'
+\f0\b0 \cf4 )\cf3 \
+\
+\cf2 # Num of sudo commands\cf3 \
+nbr_sudo\cf4 =$(\cf3 journalctl _COMM\cf4 =\cf3 sudo \cf4 |\cf3  
+\f1\b \cf6 grep
+\f0\b0 \cf3  COMMAND \cf4 |\cf3  wc
+\f1\b \cf5  -l
+\f0\b0 \cf4 )\cf3 \
+\
+wall "\cf2   #Architecture: $arc\cf3 \
+\cf2         #CPU physical : $phy_proc\cf3 \
+\cf2         #vCPU : $vir_proc\cf3 \
+\cf2         #Memory Usage: $aRAM/$\{aStorage\}MB $utiproc\cf3 \
+\cf2         #Disk Usage: $diskuse/$\{disktotal\}Gb $utidisk\cf3 \
+\cf2         #CPU load: $uticpu%\cf3 \
+\cf2         #Last boot: $lreboot\cf3 \
+\cf2         #LVM use: $lvmstat\cf3 \
+\cf2         #Connections TCP : $nbr_tcp ESTABLISHED\cf3 \
+\cf2         #User log: $nbr_usr\cf3 \
+\cf2         #Network: IP $addr_ip ($addr_mac)\cf3 \
+\cf2         #Sudo : $nbr_sudo cmd\cf3 \
+"}
